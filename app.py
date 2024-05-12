@@ -43,7 +43,7 @@ movies = pickle.load(open('movies.pkl','rb'))
 similarity = pickle.load(open('similarity.pkl', 'rb'))
 
 # Recommendation function (with caching and error handling)
-@st.cache_data
+
 def recommend(movie):
     # Load the datasets
     movies = pickle.load(open('movies.pkl','rb'))  # Move this line up
