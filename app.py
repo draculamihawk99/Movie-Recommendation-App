@@ -3,9 +3,10 @@ import pandas as pd
 import pickle
 import requests
 
+
 def fetch_poster(movie_id):
-    url = "https://api.themoviedb.org/3/movie/{}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US".format(movie_id)
-    data = requests.get(url)
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=13f47a39b05529f6e82312c80039a0e9&language=en-US".format(movie_id)
+    data = requests.get(url)  
     data = data.json()
     poster_path = data['poster_path']
     full_path = "https://image.tmdb.org/t/p/w500/" + poster_path
@@ -37,7 +38,7 @@ movies['title'].values)
 if st.button('Get Recommendations'):
     names,posters = recommend(selected_movie)
     
-    col1, col2, col3,col4,col5 = st.columns(5)
+    col1, col2, col3, col4, col5, = st.columns(5)
     with col1:
         st.text(names[0])
         st.image(posters[0])
@@ -56,41 +57,65 @@ if st.button('Get Recommendations'):
 
     with col5:
         st.text(names[4])
-        st.image(posters[4])      
+        st.image(posters[4])
 
-
-hide_streamlit_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-footer="""<style>
-a:link , a:visited{
-color: yellow;
-background-color: transparent;
-text-decoration: underline;
+if st.button('Show Recommendations'):
+    names, posters = recommend(selected_movie)
+    
+    # Poster Grid with CSS Grid and Styling
+    st.markdown(
+        """
+        
+        <style>
+        /* CSS Reset (add this at the beginning of your <style> block) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-a:hover,  a:active {
-color: white;
-# background-color: transparent;
-text-decoration: underline;
+.poster-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+    grid-gap: 10px; 
 }
 
-.footer {
-position: fixed;
-left: 0;
-bottom: 0;
-width: 100%;
-color: white;
-text-align: center;
-text-size: 30px;
+.poster {
+    transition: transform 0.2s;
+    border-radius: 8px;
+    margin: 10px;
 }
-</style>
-<div class="footer">
-<p>Developed ❤ by Rishabh <a style='display: block; text-align: center;' href="https://www.twitter.com/rishabh_55/" target="_blank">Rishabh Rathore</a></p>
-</div>
-"""
-st.markdown(footer,unsafe_allow_html=True)
+
+.poster img {
+    width: 100%;
+    height: auto;
+}
+
+        .poster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-gap: 10px; 
+        }
+        .poster {
+            transition: transform 0.2s;
+            border-radius: 8px;
+            margin: 10px;
+        }
+        .poster:hover {
+            transform: scale(1.05); 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+        }
+        .poster img {
+            width: 100%;
+            height: auto;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    st.markdown('<div class="poster-grid">', unsafe_allow_html=True)
+    for name, poster in zip(names, posters):
+        if poster:
+            st.markdown(f'<div class="poster"><p style="text-align: center;">{name}</p><img src="{poster}" style="width: 100%;"></div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
